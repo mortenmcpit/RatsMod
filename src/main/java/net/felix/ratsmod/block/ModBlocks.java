@@ -21,7 +21,7 @@ public class ModBlocks extends Blocks {
     public static final DeferredRegister<Block> BLOCKS =
             DeferredRegister.create(ForgeRegistries.BLOCKS, RatsMod.MOD_ID);
     public static final RegistryObject<Block> CHEESE_BLOCK = registerBlock("cheese_block",
-            () -> new CheeseBlock(BlockBehaviour.Properties.of(Material.CACTUS)), ModCreativeModTab.RATSMOD_TAB);
+            () -> new Block(BlockBehaviour.Properties.of(Material.CACTUS)), ModCreativeModTab.RATSMOD_TAB);
 
 
     // helper methods
