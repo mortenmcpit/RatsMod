@@ -1,6 +1,8 @@
 package net.felix.ratsmod;
 
 import com.mojang.logging.LogUtils;
+import net.felix.ratsmod.block.ModBlocks;
+import net.felix.ratsmod.item.ModItems;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -19,6 +21,10 @@ public class RatsMod {
 
     public RatsMod() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+//        Register Mod Classes
+        ModItems.register(modEventBus);
+        ModBlocks.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 
