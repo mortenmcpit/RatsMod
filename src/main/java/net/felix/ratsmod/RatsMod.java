@@ -3,6 +3,7 @@ package net.felix.ratsmod;
 import com.mojang.logging.LogUtils;
 import net.felix.ratsmod.block.ModBlocks;
 import net.felix.ratsmod.item.ModItems;
+import net.felix.ratsmod.painting.ModPaintings;
 import net.felix.ratsmod.villager.ModVillagers;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -30,6 +31,7 @@ public class RatsMod {
         ModBlocks.register(modEventBus);
         // Tutorial Registers
         ModVillagers.register(modEventBus);
+        ModPaintings.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 
