@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/crop",
+  "textures": {
+    "crop": "ratsmod:block/blueberry_stage4"
+  }
+}

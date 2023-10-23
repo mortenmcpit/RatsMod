@@ -1,6 +1,7 @@
 package net.felix.ratsmod.block;
 
 import net.felix.ratsmod.RatsMod;
+import net.felix.ratsmod.block.custom.BlueberryCropBlock;
 import net.felix.ratsmod.item.ModCreativeModTab;
 import net.felix.ratsmod.item.ModItems;
 import net.minecraft.world.item.BlockItem;
@@ -22,6 +23,9 @@ public class ModBlocks extends Blocks {
             DeferredRegister.create(ForgeRegistries.BLOCKS, RatsMod.MOD_ID);
     public static final RegistryObject<Block> CHEESE_BLOCK = registerBlock("cheese_block",
             () -> new Block(BlockBehaviour.Properties.of(Material.CACTUS)), ModCreativeModTab.RATSMOD_TAB);
+
+    public static final RegistryObject<Block> BLUEBERRY_CROP = BLOCKS.register("blueberry_crop",
+            () -> new BlueberryCropBlock(BlockBehaviour.Properties.copy(Blocks.WHEAT)));
 
 
     // helper methods
