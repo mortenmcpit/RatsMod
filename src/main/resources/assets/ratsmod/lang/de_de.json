@@ -4,5 +4,8 @@
 
   "block.ratsmod.cheese_block": "Käse Block",
 
+  "tooltip.ratsmod.leather_rat_pouch": "Rechtsklicken während des Schleichens, um eine Ratte aufzuheben",
+  "tooltip.ratsmod.more_info": "Links SHIFT für mehr Informationen",
+
   "itemGroup.ratstab": "RatsMod Tab"
 }

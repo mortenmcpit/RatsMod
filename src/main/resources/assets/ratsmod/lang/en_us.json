@@ -4,5 +4,8 @@
 
   "block.ratsmod.cheese_block": "Block of Cheese",
 
+  "tooltip.ratsmod.leather_rat_pouch": "Press right click while crouching to pick up a rat",
+  "tooltip.ratsmod.more_info": "Press SHIFT for more info",
+
   "itemGroup.ratstab": "RatsMod Tab"
 }
