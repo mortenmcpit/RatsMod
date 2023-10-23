@@ -5,6 +5,8 @@ import net.felix.ratsmod.block.ModBlocks;
 import net.felix.ratsmod.item.ModItems;
 import net.felix.ratsmod.painting.ModPaintings;
 import net.felix.ratsmod.villager.ModVillagers;
+import net.felix.ratsmod.world.feature.ModConfiguredFeatures;
+import net.felix.ratsmod.world.feature.ModPlacedFeatures;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.api.distmarker.Dist;
@@ -32,6 +34,8 @@ public class RatsMod {
         // Tutorial Registers
         ModVillagers.register(modEventBus);
         ModPaintings.register(modEventBus);
+        ModConfiguredFeatures.register(modEventBus);
+        ModPlacedFeatures.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 
