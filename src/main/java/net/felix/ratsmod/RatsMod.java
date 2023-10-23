@@ -3,6 +3,7 @@ package net.felix.ratsmod;
 import com.mojang.logging.LogUtils;
 import net.felix.ratsmod.block.ModBlocks;
 import net.felix.ratsmod.item.ModItems;
+import net.felix.ratsmod.networking.ModMessages;
 import net.felix.ratsmod.painting.ModPaintings;
 import net.felix.ratsmod.villager.ModVillagers;
 import net.felix.ratsmod.world.feature.ModConfiguredFeatures;
@@ -44,7 +45,10 @@ public class RatsMod {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         // Tutorial
-        event.enqueueWork(ModVillagers::registerPOIs);
+        event.enqueueWork(() -> {
+            ModMessages.register();
+            ModVillagers.registerPOIs();
+        });
     }
 
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
