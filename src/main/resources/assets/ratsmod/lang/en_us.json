@@ -7,5 +7,7 @@
   "tooltip.ratsmod.leather_rat_pouch": "Press right click while crouching to pick up a rat",
   "tooltip.ratsmod.more_info": "Press SHIFT for more info",
 
+  "entity.minecraft.villager.ratsmod.jumpy_master": "Cheese Master",
+
   "itemGroup.ratstab": "RatsMod Tab"
 }

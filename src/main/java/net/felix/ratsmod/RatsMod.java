@@ -3,6 +3,7 @@ package net.felix.ratsmod;
 import com.mojang.logging.LogUtils;
 import net.felix.ratsmod.block.ModBlocks;
 import net.felix.ratsmod.item.ModItems;
+import net.felix.ratsmod.villager.ModVillagers;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.api.distmarker.Dist;
@@ -27,6 +28,8 @@ public class RatsMod {
 //        Register Mod Classes
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
+        // Tutorial Registers
+        ModVillagers.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 
@@ -34,6 +37,8 @@ public class RatsMod {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
+        // Tutorial
+        event.enqueueWork(ModVillagers::registerPOIs);
     }
 
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
