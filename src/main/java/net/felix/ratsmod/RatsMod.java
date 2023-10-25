@@ -2,6 +2,8 @@ package net.felix.ratsmod;
 
 import com.mojang.logging.LogUtils;
 import net.felix.ratsmod.block.ModBlocks;
+import net.felix.ratsmod.fluid.ModFluidTypes;
+import net.felix.ratsmod.fluid.ModFluids;
 import net.felix.ratsmod.item.ModItems;
 import net.felix.ratsmod.networking.ModMessages;
 import net.felix.ratsmod.painting.ModPaintings;
@@ -37,6 +39,8 @@ public class RatsMod {
         ModPaintings.register(modEventBus);
         ModConfiguredFeatures.register(modEventBus);
         ModPlacedFeatures.register(modEventBus);
+        ModFluids.register(modEventBus);
+        ModFluidTypes.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 
@@ -55,6 +59,8 @@ public class RatsMod {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
+            ItemBlockRenderTypes.setRenderLayer(ModFluids.SOURCE_SOAP_WATER.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModFluids.FLOWING_SOAP_WATER.get(), RenderType.translucent());
         }
     }
 }

@@ -2,11 +2,14 @@ package net.felix.ratsmod.item;
 
 import net.felix.ratsmod.RatsMod;
 import net.felix.ratsmod.block.ModBlocks;
+import net.felix.ratsmod.fluid.ModFluids;
 import net.felix.ratsmod.item.custom.CheeseItem;
 import net.felix.ratsmod.item.custom.RatPouchItem;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -33,6 +36,9 @@ public class ModItems {
     public static final RegistryObject<Item> BLUEBERRY = ITEMS.register("blueberry",
             () -> new Item(new Item.Properties().tab(ModCreativeModTab.RATSMOD_TAB)
                     .food(new FoodProperties.Builder().nutrition(2).saturationMod(2f).build())));
+    public static final RegistryObject<Item> SOAP_WATER_BUCKET = ITEMS.register("soap_water_bucket",
+            () -> new BucketItem(ModFluids.SOURCE_SOAP_WATER,
+                    new Item.Properties().tab(ModCreativeModTab.RATSMOD_TAB).craftRemainder(Items.BUCKET).stacksTo(1)));
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
