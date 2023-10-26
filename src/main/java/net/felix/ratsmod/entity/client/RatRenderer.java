@@ -28,6 +28,12 @@ public class RatRenderer extends GeoEntityRenderer<RatEntity> {
     public RenderType getRenderType(RatEntity animatable, float partialTick, PoseStack poseStack,
                                     @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer,
                                     int packedLight, ResourceLocation texture) {
+        if (animatable.isBaby()) {
+            poseStack.scale(0.4f, 0.4f, 0.4f);
+        } else {
+            poseStack.scale(0.8f, 0.8f, 0.8f);
+        }
+
         return super.getRenderType(animatable, partialTick, poseStack, bufferSource, buffer, packedLight, texture);
     }
 }

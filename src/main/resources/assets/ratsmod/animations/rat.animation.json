@@ -1086,6 +1086,42 @@
 					}
 				}
 			}
+		},
+		"animation.rat.sit": {
+			"loop": true,
+			"bones": {
+				"root": {
+					"rotation": {
+						"vector": [-55, 0, 0]
+					},
+					"position": {
+						"vector": [0, 4, 0]
+					}
+				},
+				"tail": {
+					"rotation": {
+						"vector": [57.5, 0, 0]
+					}
+				},
+				"tailend": {
+					"rotation": {
+						"vector": [0, -22.5, 0]
+					}
+				},
+				"head": {
+					"rotation": {
+						"vector": [52.5, 0, 0]
+					}
+				},
+				"frontlegs": {
+					"rotation": {
+						"vector": [22.5, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 2]
+					}
+				}
+			}
 		}
 	},
 	"geckolib_format_version": 2

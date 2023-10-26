@@ -63,8 +63,8 @@ public class RatEntity extends TamableAnimal implements IAnimatable {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(2, new PanicGoal(this, 1.25D));
-        this.goalSelector.addGoal(3, new TemptGoal(this, 1.0D, Ingredient.of(
-                Items.CARROT, Items.APPLE, Blocks.DANDELION, ModItems.CHEESE.get()), false));
+        this.goalSelector.addGoal(2, new BreedGoal(this, 1.0D));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.0D, Ingredient.of(Items.CARROT, Items.APPLE, Items.PUMPKIN_SEEDS, ModItems.CHEESE.get()), false));
         this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.1D));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 10.0F));
         this.goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.0D, 10.0F, 2.0F, false));
@@ -83,7 +83,7 @@ public class RatEntity extends TamableAnimal implements IAnimatable {
         }
 
         if (isSitting()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.rat.flat", true));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.rat.sit", true));
             return PlayState.CONTINUE;
         }
 
@@ -105,6 +105,11 @@ public class RatEntity extends TamableAnimal implements IAnimatable {
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob mob) {
         return ModEntityTypes.RAT.get().create(level);
+    }
+
+    @Override
+    public boolean isFood(ItemStack pStack) {
+        return pStack.getItem() == ModItems.CHEESE.get();
     }
 
     protected SoundEvent getAmbientSound() {
@@ -129,7 +134,11 @@ public class RatEntity extends TamableAnimal implements IAnimatable {
         ItemStack itemstack = player.getItemInHand(hand);
         Item item = itemstack.getItem();
 
-        Item itemForTaming = ModItems.CHEESE.get();
+        Item itemForTaming = Items.PUMPKIN_SEEDS;
+
+        if (isFood(itemstack)) {
+            return super.mobInteract(player, hand);
+        }
 
         if (item == itemForTaming && !isTame()) {
             if (this.level.isClientSide) {
@@ -209,7 +218,7 @@ public class RatEntity extends TamableAnimal implements IAnimatable {
         if (pTamed) {
             getAttribute(Attributes.MAX_HEALTH).setBaseValue(10.0D);
             getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(0.2D);
-            getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(1.0D);
+            getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.7D);
         } else {
             getAttribute(Attributes.MAX_HEALTH).setBaseValue(5.0D);
             getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(0.1D);
