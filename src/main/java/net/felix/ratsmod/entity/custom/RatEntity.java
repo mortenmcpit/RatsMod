@@ -8,9 +8,12 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.Rabbit;
@@ -30,11 +33,12 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class RatEntity extends Animal implements IAnimatable {
+public class RatEntity extends TamableAnimal implements IAnimatable {
     private AnimationFactory factory = new AnimationFactory(this);
 
-    public RatEntity(EntityType<? extends Animal> pEntityType, Level pLevel) {
+    public RatEntity(EntityType<? extends RatEntity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+        this.setTame(false);
     }
 
     public static AttributeSupplier createAttributes() {
@@ -45,6 +49,13 @@ public class RatEntity extends Animal implements IAnimatable {
                 .add(Attributes.MOVEMENT_SPEED, 0.3F)
                 .build();
     }
+    //return MobEntity.createMobAttributes()
+    // .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.0D)
+    // .add(StepHeightEntityAttributeMain.STEP_HEIGHT, 2.0D)
+    // .add(EntityAttributes.GENERIC_MAX_HEALTH, 8.0D)
+    // .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.5D)
+    // .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 0.1)
+    // .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32);
 
     @Override
     protected void registerGoals() {
@@ -55,7 +66,12 @@ public class RatEntity extends Animal implements IAnimatable {
         this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.1D));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 10.0F));
         this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.6D));
+        this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.0D, 10.0F, 2.0F, false));
+        this.goalSelector.addGoal(7, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+
+        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
 
         /*
         Goals from Ratsmischief - find equivalent for these fabric goals
@@ -67,12 +83,7 @@ public class RatEntity extends Animal implements IAnimatable {
         this.goalSelector.addGoal(5, new PickupItemGoal());
         this.goalSelector.addGoal(5, new BringItemToOwnerGoal(this, 1.0D, false));
         this.goalSelector.addGoal(6, new FollowOwnerRatGoal(this, 1.0D, 20.0F, 2.0F, false));
-        this.goalSelector.addGoal(7, new AnimalMateGoal(this, 1.0D));
         this.goalSelector.addGoal(8, new WanderAroundFarGoal(this, 1.0D));
-        this.goalSelector.addGoal(10, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
-        this.goalSelector.addGoal(10, new LookAroundGoal(this));
-        this.targetSelector.addGoal(1, new TrackOwnerAttackerGoal(this));
-        this.targetSelector.addGoal(2, new AttackWithOwnerGoal(this));
         this.targetSelector.addGoal(3, new RevengeGoal(this).setGroupRevenge());
         this.targetSelector.addGoal(4, new TargetGoal<>(this, PlayerEntity.class, 10, true, false, this::shouldAngerAt));
         this.targetSelector.addGoal(8, new ChaseForFunGoal<>(this, CatEntity.class, true));
