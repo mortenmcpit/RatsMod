@@ -1,6 +1,7 @@
 package net.felix.ratsmod.entity.custom;
 
 import net.felix.ratsmod.entity.ModEntityTypes;
+import net.felix.ratsmod.entity.ai.EatToHealGoal;
 import net.felix.ratsmod.entity.variant.RatVariant;
 import net.felix.ratsmod.item.ModItems;
 import net.minecraft.Util;
@@ -30,20 +31,25 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.scores.Team;
 import net.minecraftforge.event.ForgeEventFactory;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.builder.ILoopType;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
+
+import java.util.Objects;
 
 public class RatEntity extends TamableAnimal implements IAnimatable {
-    private AnimationFactory factory = new AnimationFactory(this);
+    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
-    private static final EntityDataAccessor<Boolean> SITTING =
-            SynchedEntityData.defineId(RatEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> SITTING = SynchedEntityData.defineId(RatEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> EATING = SynchedEntityData.defineId(RatEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_ID_TYPE_VARIANT =
             SynchedEntityData.defineId(RatEntity.class, EntityDataSerializers.INT);
 
@@ -53,7 +59,7 @@ public class RatEntity extends TamableAnimal implements IAnimatable {
     }
 
     public static AttributeSupplier createAttributes() {
-        return TamableAnimal.createMobAttributes()
+        return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 5.0D)
                 .add(Attributes.ATTACK_DAMAGE, 0.1D)
                 .add(Attributes.FOLLOW_RANGE, 32)
@@ -67,6 +73,7 @@ public class RatEntity extends TamableAnimal implements IAnimatable {
         this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(2, new PanicGoal(this, 1.25D));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0D));
+        this.goalSelector.addGoal(3, new EatToHealGoal(this));
         this.goalSelector.addGoal(3, new TemptGoal(this, 1.0D, Ingredient.of(Items.CARROT, Items.APPLE, Items.PUMPKIN_SEEDS, ModItems.CHEESE.get()), false));
         this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.1D));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 10.0F));
@@ -81,18 +88,19 @@ public class RatEntity extends TamableAnimal implements IAnimatable {
 
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
         if (event.isMoving()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.rat.run", true));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.rat.run", ILoopType.EDefaultLoopTypes.LOOP));
+            return PlayState.CONTINUE;
+        } else if (this.isSitting()) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.rat.sit", ILoopType.EDefaultLoopTypes.LOOP));
+            return PlayState.CONTINUE;
+        } else if (this.isEating()) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.rat.eat", ILoopType.EDefaultLoopTypes.LOOP));
             return PlayState.CONTINUE;
         }
-
-        if (isSitting()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.rat.sit", true));
-            return PlayState.CONTINUE;
-        }
-
-        event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.rat.flat", true));
-        return PlayState.CONTINUE;
+        event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.rat.flat", ILoopType.EDefaultLoopTypes.LOOP));
+        return PlayState.STOP;
     }
+
 
     @Override
     public void registerControllers(AnimationData data) {
@@ -106,9 +114,10 @@ public class RatEntity extends TamableAnimal implements IAnimatable {
 
     @Nullable
     @Override
-    public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob mob) {
+    public AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
         RatEntity baby = ModEntityTypes.RAT.get().create(level);
         RatVariant variant = Util.getRandom(RatVariant.values(), this.random);
+        assert baby != null;
         baby.setVariant(variant);
 
         return baby;
@@ -123,7 +132,7 @@ public class RatEntity extends TamableAnimal implements IAnimatable {
         return SoundEvents.RABBIT_AMBIENT;
     }
 
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
+    protected SoundEvent getHurtSound(@NotNull DamageSource damageSourceIn) {
         return SoundEvents.RABBIT_HURT;
     }
 
@@ -137,7 +146,7 @@ public class RatEntity extends TamableAnimal implements IAnimatable {
 
     /* TAMEABLE */
     @Override
-    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+    public @NotNull InteractionResult mobInteract(Player player, @NotNull InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         Item item = itemstack.getItem();
 
@@ -182,16 +191,18 @@ public class RatEntity extends TamableAnimal implements IAnimatable {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
+    public void readAdditionalSaveData(@NotNull CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         setSitting(tag.getBoolean("isSitting"));
+        setEating(tag.getBoolean("isEating"));
         this.entityData.set(DATA_ID_TYPE_VARIANT, tag.getInt("Variant"));
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
+    public void addAdditionalSaveData(@NotNull CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putBoolean("isSitting", this.isSitting());
+        tag.putBoolean("isEating", this.isEating());
         tag.putInt("Variant", this.getTypeVariant());
     }
 
@@ -199,7 +210,12 @@ public class RatEntity extends TamableAnimal implements IAnimatable {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(SITTING, false);
+        this.entityData.define(EATING, false);
         this.entityData.define(DATA_ID_TYPE_VARIANT, 0);
+    }
+
+    public boolean isSitting() {
+        return this.entityData.get(SITTING);
     }
 
     public void setSitting(boolean sitting) {
@@ -207,8 +223,12 @@ public class RatEntity extends TamableAnimal implements IAnimatable {
         this.setOrderedToSit(sitting);
     }
 
-    public boolean isSitting() {
-        return this.entityData.get(SITTING);
+    public boolean isEating() {
+        return this.entityData.get(EATING);
+    }
+
+    public void setEating(boolean eating) {
+        this.entityData.set(EATING, eating);
     }
 
 
@@ -226,13 +246,13 @@ public class RatEntity extends TamableAnimal implements IAnimatable {
     public void setTame(boolean pTamed) {
         super.setTame(pTamed);
         if (pTamed) {
-            getAttribute(Attributes.MAX_HEALTH).setBaseValue(10.0D);
-            getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(0.2D);
-            getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.7D);
+            Objects.requireNonNull(getAttribute(Attributes.MAX_HEALTH)).setBaseValue(10.0D);
+            Objects.requireNonNull(getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(0.2D);
+            Objects.requireNonNull(getAttribute(Attributes.MOVEMENT_SPEED)).setBaseValue(0.7D);
         } else {
-            getAttribute(Attributes.MAX_HEALTH).setBaseValue(5.0D);
-            getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(0.1D);
-            getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.5D);
+            Objects.requireNonNull(getAttribute(Attributes.MAX_HEALTH)).setBaseValue(5.0D);
+            Objects.requireNonNull(getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(0.1D);
+            Objects.requireNonNull(getAttribute(Attributes.MOVEMENT_SPEED)).setBaseValue(0.5D);
         }
     }
 
