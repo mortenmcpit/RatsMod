@@ -21,7 +21,7 @@ public class ModItems {
         - add logic to items
     */
     public static final RegistryObject<Item> LEATHER_RAT_POUCH = ITEMS.register("leather_rat_pouch",
-            () -> new RatPouchItem(new Item.Properties().tab(ModCreativeModTab.RATSMOD_TAB)));
+            () -> new RatPouchItem(new Item.Properties().tab(ModCreativeModTab.RATSMOD_TAB), 5));
     public static final RegistryObject<Item> CHEESE = ITEMS.register("cheese",
             () -> new CheeseItem(new Item.Properties().tab(ModCreativeModTab.RATSMOD_TAB)));
     public static final RegistryObject<Item> RAT_SPAWN_EGG = ITEMS.register("rat_spawn_egg",
