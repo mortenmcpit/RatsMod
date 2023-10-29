@@ -29,6 +29,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.scores.Team;
 import net.minecraftforge.event.ForgeEventFactory;
 import org.jetbrains.annotations.NotNull;
@@ -85,6 +86,18 @@ public class RatEntity extends TamableAnimal implements IAnimatable {
         this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
 
     }
+    // Code from Alex's Mobs
+    /*public void tick() {
+        super.tick();
+        if (canTargetItem(this.getMainHandItem())) {
+            onEatItem();
+            if (this.getMainHandItem().hasCraftingRemainingItem()) {
+                this.spawnAtLocation(this.getMainHandItem().getCraftingRemainingItem());
+            }
+            this.getMainHandItem().shrink(1);
+        }
+    }*/
+    //
 
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
         if (event.isMoving()) {
@@ -182,6 +195,31 @@ public class RatEntity extends TamableAnimal implements IAnimatable {
             setSitting(!isSitting());
             return InteractionResult.SUCCESS;
         }
+        // Eating code from Alex's Mobs
+        if (isTame() && isFood(itemstack)
+//                && !isFood(itemstack)
+                && this.getHealth() < this.getMaxHealth()) {
+            if (this.getMainHandItem().isEmpty()) {
+                ItemStack copy = itemstack.copy();
+                copy.setCount(1);
+                this.setItemInHand(InteractionHand.MAIN_HAND, copy);
+                this.onEatItem();
+                if (itemstack.hasCraftingRemainingItem()) {
+                    this.spawnAtLocation(itemstack.getCraftingRemainingItem());
+                }
+                if (!player.isCreative()) {
+                    itemstack.shrink(1);
+                }
+                this.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+            } else {
+                this.gameEvent(GameEvent.EAT);
+                this.playSound(SoundEvents.GENERIC_EAT, this.getSoundVolume(), this.getVoicePitch());
+                this.heal(5);
+            }
+            this.usePlayerItem(player, hand, itemstack);
+            return InteractionResult.SUCCESS;
+        }
+        //
 
         if (itemstack.getItem() == itemForTaming) {
             return InteractionResult.PASS;
@@ -231,6 +269,16 @@ public class RatEntity extends TamableAnimal implements IAnimatable {
         this.entityData.set(EATING, eating);
     }
 
+    // Code from Alex's Mobs
+    public void onEatItem() {
+        this.heal(10);
+        this.level.broadcastEntityEvent(this, (byte) 92);
+        this.gameEvent(GameEvent.EAT);
+        this.playSound(SoundEvents.GENERIC_EAT, this.getSoundVolume(), this.getVoicePitch());
+    }
+
+
+    //
 
     @Override
     public Team getTeam() {
