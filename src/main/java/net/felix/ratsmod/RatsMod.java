@@ -2,6 +2,7 @@ package net.felix.ratsmod;
 
 import com.mojang.logging.LogUtils;
 import net.felix.ratsmod.block.ModBlocks;
+import net.felix.ratsmod.block.util.MilkCauldronInteraction;
 import net.felix.ratsmod.entity.ModEntityTypes;
 import net.felix.ratsmod.entity.client.RatRenderer;
 import net.felix.ratsmod.item.ModItems;
@@ -49,6 +50,7 @@ public class RatsMod {
             SpawnPlacements.register(ModEntityTypes.RAT.get(),
                     SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                     Animal::checkAnimalSpawnRules);
+            MilkCauldronInteraction.bootstrap();
         });
     }
 

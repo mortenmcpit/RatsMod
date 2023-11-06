@@ -1,6 +1,8 @@
 package net.felix.ratsmod.block;
 
 import net.felix.ratsmod.RatsMod;
+import net.felix.ratsmod.block.custom.MilkCauldronBlock;
+import net.felix.ratsmod.block.util.MilkCauldronInteraction;
 import net.felix.ratsmod.item.ModCreativeModTab;
 import net.felix.ratsmod.item.ModItems;
 import net.minecraft.world.item.BlockItem;
@@ -8,6 +10,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CauldronBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -22,6 +25,8 @@ public class ModBlocks extends Blocks {
             DeferredRegister.create(ForgeRegistries.BLOCKS, RatsMod.MOD_ID);
     public static final RegistryObject<Block> CHEESE_BLOCK = registerBlock("cheese_block",
             () -> new Block(BlockBehaviour.Properties.of(Material.CACTUS)), ModCreativeModTab.RATSMOD_TAB);
+    public static final RegistryObject<Block> MILK_CAULDRON = BLOCKS.register("milk_cauldron",
+            () -> new MilkCauldronBlock(BlockBehaviour.Properties.copy(Blocks.CAULDRON), MilkCauldronInteraction.MILK));
 
 
     // helper methods
