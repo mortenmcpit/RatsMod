@@ -1,6 +1,7 @@
 package net.felix.ratsmod.block;
 
 import net.felix.ratsmod.RatsMod;
+import net.felix.ratsmod.block.custom.CheeseCauldronBlock;
 import net.felix.ratsmod.block.custom.MilkCauldronBlock;
 import net.felix.ratsmod.block.util.MilkCauldronInteraction;
 import net.felix.ratsmod.item.ModCreativeModTab;
@@ -27,9 +28,11 @@ public class ModBlocks extends Blocks {
             () -> new Block(BlockBehaviour.Properties.of(Material.CACTUS)), ModCreativeModTab.RATSMOD_TAB);
     // TODO:
     //  Missing Milk Texture in Cauldron
-    //  No "turn-to-milk" functionality
+    //  Missing Cheese Texture in Cauldron
     public static final RegistryObject<Block> MILK_CAULDRON = BLOCKS.register("milk_cauldron",
             () -> new MilkCauldronBlock(BlockBehaviour.Properties.copy(Blocks.CAULDRON), MilkCauldronInteraction.MILK));
+    public static final RegistryObject<Block> CHEESE_CAULDRON = BLOCKS.register("cheese_cauldron",
+            () -> new CheeseCauldronBlock(BlockBehaviour.Properties.copy(Blocks.CAULDRON), MilkCauldronInteraction.MILK));
 
 
     // helper methods
