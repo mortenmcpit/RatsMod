@@ -25,6 +25,9 @@ public class ModBlocks extends Blocks {
             DeferredRegister.create(ForgeRegistries.BLOCKS, RatsMod.MOD_ID);
     public static final RegistryObject<Block> CHEESE_BLOCK = registerBlock("cheese_block",
             () -> new Block(BlockBehaviour.Properties.of(Material.CACTUS)), ModCreativeModTab.RATSMOD_TAB);
+    // TODO:
+    //  Missing Milk Texture in Cauldron
+    //  No "turn-to-milk" functionality
     public static final RegistryObject<Block> MILK_CAULDRON = BLOCKS.register("milk_cauldron",
             () -> new MilkCauldronBlock(BlockBehaviour.Properties.copy(Blocks.CAULDRON), MilkCauldronInteraction.MILK));
 
